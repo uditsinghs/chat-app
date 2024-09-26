@@ -1,11 +1,6 @@
 import { User } from "../models/user.model.js";
-import {
-  hashPassword,
-  comparePassword,
-  generateTokenAndsaveCookie,
-} from "../Helper/auth.utils.js";
-
-
+import { hashPassword, comparePassword } from "../Helper/auth.utils.js";
+import jwt from "jsonwebtoken";
 const validateFields = (fields, res) => {
   for (const field in fields) {
     if (!fields[field]) {
@@ -54,10 +49,6 @@ export const signup = async (req, res) => {
     });
 
     await newUser.save();
-
-    // Generate token and save cookie
-    await generateTokenAndsaveCookie(newUser._id, res);
-
     res.status(201).json({
       success: true,
       message: "User created successfully",
@@ -100,9 +91,15 @@ export const login = async (req, res) => {
         message: "Invalid credentials",
       });
     }
-
-    // Generate token and save cookie
-    await generateTokenAndsaveCookie(existingUser._id, res);
+    const token = jwt.sign(
+      {
+        id: existingUser._id,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "10d",
+      }
+    );
 
     res.status(200).json({
       success: true,
@@ -112,6 +109,7 @@ export const login = async (req, res) => {
         name: existingUser.name,
         email: existingUser.email,
       },
+      token,
     });
   } catch (error) {
     console.log(error);
@@ -123,18 +121,54 @@ export const login = async (req, res) => {
 };
 
 // Logout Controller
-export const logoutUser = async (req, res) => {
+// export const logoutUser = async (req, res) => {
+//   try {
+//     res.clearCookie("jwt");
+//     res.status(200).json({
+//       success: true,
+//       message: "User logged out successfully",
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).json({
+//       success: false,
+//       message: "Internal Server Error",
+//     });
+//   }
+// };
+
+// get all users
+
+export const getAllusers = async (req, res) => {
   try {
-    res.clearCookie("jwt");
+    const loggedInUser = req.user._id;
+    const users = await User.find({ _id: { $ne: loggedInUser } }).select(
+      "-password"
+    );
+    res.status(200).json(users);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "internal server error",
+      error,
+      success: false,
+    });
+  }
+};
+
+// get Login user
+export const loginUser = async (req, res) => {
+  try {
+    const id = req.user._id;
+    const userData = await User.findById(id).select("-password");
     res.status(200).json({
+      userData,
       success: true,
-      message: "User logged out successfully",
     });
   } catch (error) {
     console.log(error);
     res.status(500).json({
-      success: false,
-      message: "Internal Server Error",
+      message: "Error while get LoginUser data",
     });
   }
 };

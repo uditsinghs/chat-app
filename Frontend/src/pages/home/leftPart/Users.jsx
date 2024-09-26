@@ -7,19 +7,6 @@ function Users() {
 
       <div className="scrollbar-hide overflow-y-auto py-2" style={{maxHeight:"calc(82vh - 10vh)"}}>
         <User />
-        <User />
-        <User />
-        <User />
-        <User />
-        <User />
-        <User />
-        <User />
-        <User />
-        <User />
-        <User />
-        <User />
-        <User />
-        <User />
       </div>
     </div>
 
