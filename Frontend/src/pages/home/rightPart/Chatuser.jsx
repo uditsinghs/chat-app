@@ -1,6 +1,7 @@
-import {useAuth} from '../../../context/Auth'
+
+import useConversation from '../../../zustand/useConversation'
 function Chatuser() {
-  const {user} = useAuth()
+  const {selectedConversation} = useConversation()
   return (
 <div className="h-[10vh]">
 <div className="flex items-center justify-center py-4 bg-gray-800 hover:bg-gray-700 duration-300 space-x-4 cursor-pointer">
@@ -10,8 +11,8 @@ function Chatuser() {
         </div>
       </div>
       <div>
-        <h1 className="text-xl font-bold">{user.name}</h1>
-        <span className="text-sm">Offline</span>
+        <h1 className="text-xl font-bold">{selectedConversation?.name}</h1>
+        <span className="text-sm">Online</span>
       </div>
     </div>
 </div>

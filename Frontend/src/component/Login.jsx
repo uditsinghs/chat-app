@@ -14,7 +14,7 @@ const Login = () => {
         email,
         password,
       });
-      // console.log('login successful:', data);
+
       if (data.success) {
         alert(data.message)
         storeDataInLS(data.token)
@@ -39,7 +39,6 @@ const Login = () => {
             <input type="password" name="password" placeholder="Password" className="mt-4 p-2 rounded-lg outline-none bg-slate-700 text-lg" value={password} onChange={(e) => setPassword(e.target.value)} />
             <Link to="/signup" className="mt-4 text-xl ml-2">if Not Regestered ? <span className="text-blue-500 underline cursor-pointer">Signup</span></Link>
             <div className="flex justify-center">
-
               <button type="submit" className="w-[60px] mt-4 py-2 px-3 bg-blue-600 hover:bg-blue-800 duration-300 rounded-lg">Login</button>
             
           
